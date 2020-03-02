@@ -9,28 +9,41 @@ class RandomColorApp extends StatefulWidget {
 
 class _RandomColorAppState extends State<RandomColorApp> {
   static final int a = 255;
-  List listToShuffle = List.generate(a + 1, (i) => i);
-  int r;
-  int g;
-  int b;
-  Color bgColor;
-  Color textColor = Color.fromARGB(a, a, a, a);
+  static final List listToShuffle = List.generate(a + 1, (i) => i);
+  Color _bgColor;
+  Color _textColor;
 
-  /// Changes the [bgColor] to randomly generated one.
+  /// Changes the [_bgColor] to randomly generated one.
   ///
-  /// Also changes the [textColor] to inverted to the [bgColor]
+  /// Also changes the [_textColor] to inverted to the [_bgColor]
   /// for better visibility.
   void _setBackgroundColorRandomly() {
-    listToShuffle.shuffle();
-    r = listToShuffle[0];
-    listToShuffle.shuffle();
-    g = listToShuffle[0];
-    listToShuffle.shuffle();
-    b = listToShuffle[0];
     setState(() {
-      bgColor = Color.fromARGB(a, r, g, b);
-      textColor = Color.fromARGB(a, a - r, a - g, a - b);
+      _bgColor = _getRandomColor();
+      _textColor = _getInvertedToBackgroundColor();
     });
+  }
+
+  Color _getRandomColor() {
+    listToShuffle.shuffle();
+    int r = listToShuffle[0];
+    listToShuffle.shuffle();
+    int g = listToShuffle[0];
+    listToShuffle.shuffle();
+    int b = listToShuffle[0];
+    return Color.fromARGB(a, r, g, b);
+  }
+
+  Color _getInvertedToBackgroundColor() {
+    return Color.fromARGB(
+        a, a - _bgColor.red, a - _bgColor.green, a - _bgColor.blue);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _bgColor = _getRandomColor();
+    _textColor = _getInvertedToBackgroundColor();
   }
 
   @override
@@ -40,14 +53,14 @@ class _RandomColorAppState extends State<RandomColorApp> {
           _setBackgroundColorRandomly();
         },
         child: Container(
-          decoration: BoxDecoration(color: bgColor),
+          decoration: BoxDecoration(color: _bgColor),
           child: Center(
             child: Text(
               'Hey there',
               textDirection: TextDirection.ltr,
               style: TextStyle(
                 fontSize: 32,
-                color: textColor,
+                color: _textColor,
               ),
             ),
           ),
